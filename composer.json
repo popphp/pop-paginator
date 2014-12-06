@@ -1,13 +1,12 @@
 {
     "name": "popphp/pop-paginator",
-    "description": "Pop Paginator Component for Pop PHP Framework 2",
+    "description": "Pop Paginator Component for Pop PHP Framework",
     "keywords": [
         "paginator",
         "pagination",
         "php",
         "pop",
-        "pop php",
-        "pop php 2"
+        "pop php"
     ],
     "homepage": "http://www.popphp.org/",
     "license": "New BSD",
@@ -24,6 +23,11 @@
     "autoload": {
         "psr-4": {
             "Pop\\Paginator\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
         }
     }
 }
