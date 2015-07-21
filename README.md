@@ -6,8 +6,8 @@ pop-paginator
 
 OVERVIEW
 --------
-`pop-paginator` is a component for handling pagination for large data sets. You can multiple options
-you can set to control the display of the pages.  
+`pop-paginator` is a component for handling pagination for large data sets.
+You can set multiple options to control the display of the pages and the links.
 
 `pop-paginator` is a component of the [Pop PHP Framework](http://www.popphp.org/).
 
@@ -111,11 +111,11 @@ that will allow the user to input a specific page to jump to.
 
 You can set many options to tailor the paginator's look and functionality:
  
-* number of items per page
-* range of the page sets
-* separator between the page links
-* the on/off classes of the page links
-* the bookend characters
+* Number of items per page
+* Range of the page sets
+* Separator between the page links
+* Classes for the on/off page links
+* Bookend characters
     + start
     + previous
     + next
