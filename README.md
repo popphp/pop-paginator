@@ -2,7 +2,7 @@ pop-paginator
 =============
 
 [![Build Status](https://travis-ci.org/popphp/pop-paginator.svg?branch=master)](https://travis-ci.org/popphp/pop-paginator)
-[![Coverage Status](http://www.popphp.org/cc/coverage.php?comp=pop-paginator)](http://www.popphp.org/cc/pop-paginator/)
+[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-paginator)](http://cc.popphp.org/pop-paginator/)
 
 OVERVIEW
 --------
@@ -110,7 +110,7 @@ that will allow the user to input a specific page to jump to.
 ### Other options
 
 You can set many options to tailor the paginator's look and functionality:
- 
+
 * Number of items per page
 * Range of the page sets
 * Separator between the page links
