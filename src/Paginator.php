@@ -21,7 +21,7 @@ namespace Pop\Paginator;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.1.0
+ * @version    2.1.1
  */
 class Paginator
 {
@@ -492,8 +492,9 @@ class Paginator
         $this->links = [];
 
         // Preserve any passed GET parameters.
-        $query = null;
-        $uri   = null;
+        $query  = null;
+        $hidden = null;
+        $uri    = null;
 
         if (isset($_SERVER['REQUEST_URI'])) {
             $uri = (!empty($_SERVER['QUERY_STRING'])) ?
@@ -503,7 +504,8 @@ class Paginator
             if (count($_GET) > 0) {
                 foreach ($_GET as $key => $value) {
                     if ($key != $this->queryKey) {
-                        $query .= '&' . $key . '=' . $value;
+                        $query  .= '&' . $key . '=' . $value;
+                        $hidden .= '<input type="hidden" name="' . $key . '" value="' . $value . '" />';
                     }
                 }
             }
@@ -522,7 +524,11 @@ class Paginator
             if ($this->useInput) {
                 $newLink = '<form action="' . $uri . ((null !== $query) ? '?' . substr($query, 1)  : null) .
                     '" method="get"><div><input type="text" name="' . $this->queryKey . '" size="2" value="' .
-                    $this->currentPage . '" /> ' . $this->inputSeparator . ' ' . $this->numberOfPages . '</div></form>';
+                    $this->currentPage . '" /> ' . $this->inputSeparator . ' ' . $this->numberOfPages . '</div>';
+                if (null !== $hidden) {
+                    $newLink .= '<div>' . $hidden . '</div>';
+                }
+                $newLink .= '</form>';
             } else {
                 $newLink = ($i == $page) ? "<span{$classOff}>{$i}</span>" : "<a{$classOn} href=\"" . $uri . "?" .
                     $this->queryKey . "={$i}{$query}\">{$i}</a>";
