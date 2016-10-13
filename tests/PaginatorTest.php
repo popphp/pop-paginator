@@ -9,31 +9,37 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructor()
     {
-        $paginator = new Paginator(100);
-        $this->assertInstanceOf('Pop\Paginator\Paginator', $paginator);
-        $this->assertEquals(100, $paginator->getTotal());
-        $this->assertEquals(10, $paginator->getPerPage());
-        $this->assertEquals(10, $paginator->getRange());
-        $this->assertEquals(1, $paginator->getCurrentPage());
+        $range = Paginator::createRange(100);
+        $form  = Paginator::createForm(100);
+        $this->assertInstanceOf('Pop\Paginator\Range', $range);
+        $this->assertInstanceOf('Pop\Paginator\Form', $form);
+        $this->assertEquals(100, $range->getTotal());
+        $this->assertEquals(10, $range->getPerPage());
+        $this->assertEquals(10, $range->getRange());
+        $this->assertEquals(1, $range->getCurrentPage());
+        $this->assertEquals(100, $form->getTotal());
+        $this->assertEquals(10, $form->getPerPage());
+        $this->assertEquals(1, $form->getRange());
+        $this->assertEquals(1, $form->getCurrentPage());
     }
 
     public function testSetQueryKey()
     {
-        $paginator = new Paginator(100);
+        $paginator = Paginator::createRange(100);
         $paginator->setQueryKey('p');
         $this->assertEquals('p', $paginator->getQueryKey());
     }
 
     public function testSetSeparator()
     {
-        $paginator = new Paginator(100);
+        $paginator = Paginator::createRange(100);
         $paginator->setSeparator(':');
         $this->assertEquals(':', $paginator->getSeparator());
     }
 
     public function testSetClasses()
     {
-        $paginator = new Paginator(100);
+        $paginator = Paginator::createRange(100);
         $paginator->setClassOn('link-on');
         $paginator->setClassOff('link-off');
         $this->assertEquals('link-on', $paginator->getClassOn());
@@ -42,7 +48,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
 
     public function testSetBookends()
     {
-        $paginator = new Paginator(100);
+        $paginator = Paginator::createRange(100);
         $paginator->setBookends([
             'start'    => '<<',
             'previous' => '<',
@@ -56,44 +62,37 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('<<', $paginator->getBookends()['start']);
     }
 
-    public function testUseInput()
-    {
-        $paginator = new Paginator(100);
-        $paginator->useInput(true);
-        $this->assertEquals(1, $paginator->getRange());
-    }
-
-    public function testGetLinks()
+    public function testGetRange()
     {
         $_SERVER['REQUEST_URI'] = '/pages.php';
         $_SERVER['QUERY_STRING'] = 'page=2';
         $_GET = [
             'var' => 123
         ];
-        $paginator = new Paginator(127);
+        $paginator = Paginator::createRange(127);
         $paginator->setBookends([
             'start'    => '<<',
             'previous' => '<',
             'next'     => '>',
             'end'      => '>>'
         ]);
-        $links = $paginator->getLinks(3);
+        $links = $paginator->getLinkRange(3);
+        $pages = (string)$paginator;
         $this->assertEquals(13, $paginator->getNumberOfPages());
     }
 
-    public function testGetLinksInput()
+    public function testGetForm()
     {
         $_SERVER['REQUEST_URI'] = '/pages.php';
         $_SERVER['QUERY_STRING'] = 'page=2';
         $_GET = [
             'var' => 123
         ];
-        $paginator = new Paginator(127);
-        $paginator->useInput(true);
-        $links = $paginator->getLinks(13);
-        $links = $paginator->getLinks(1);
-        $links = $paginator->getLinks(2);
-        $links = $paginator->getLinks(12);
+        $paginator = Paginator::createForm(127);
+        $links = $paginator->getFormString(13);
+        $links = $paginator->getFormString(1);
+        $links = $paginator->getFormString(2);
+        $links = $paginator->getFormString(12);
         $pages = (string)$paginator;
         $this->assertEquals(13, $paginator->getNumberOfPages());
         $this->assertContains('<form', $pages);
