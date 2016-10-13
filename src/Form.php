@@ -52,6 +52,18 @@ class Form extends AbstractPaginator
     }
 
     /**
+     * Set input separator
+     *
+     * @param  string $separator
+     * @return Form
+     */
+    public function setInputSeparator($separator)
+    {
+        $this->inputSeparator = $separator;
+        return $this;
+    }
+
+    /**
      * Get the page form string
      *
      * @param  int $page

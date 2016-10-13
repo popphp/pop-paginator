@@ -89,6 +89,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
             'var' => 123
         ];
         $paginator = Paginator::createForm(127);
+        $paginator->setInputSeparator(' o ');
         $links = $paginator->getFormString(13);
         $links = $paginator->getFormString(1);
         $links = $paginator->getFormString(2);
