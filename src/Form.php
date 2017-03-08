@@ -131,6 +131,8 @@ class Form extends AbstractPaginator
             $form .= '<div>' . $hidden . '</div>';
         }
 
+        $form .= '</form>';
+
         $startLinks  = null;
         $endLinks    = null;
 
@@ -158,7 +160,7 @@ class Form extends AbstractPaginator
             }
         }
 
-        $this->form = $startLinks . $form . $endLinks . '</form>';
+        $this->form = $startLinks . $form . $endLinks;
     }
 
     /**
