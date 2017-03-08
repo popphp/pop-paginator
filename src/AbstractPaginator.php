@@ -75,6 +75,17 @@ abstract class AbstractPaginator
     protected $end = null;
 
     /**
+     * Page bookends
+     * @var array
+     */
+    protected $bookends = [
+        'start'    => '&laquo;',
+        'previous' => '&lsaquo;',
+        'next'     => '&rsaquo;',
+        'end'      => '&raquo;'
+    ];
+
+    /**
      * Constructor
      *
      * Instantiate the paginator object
@@ -99,6 +110,30 @@ abstract class AbstractPaginator
     public function setQueryKey($key)
     {
         $this->queryKey = $key;
+        return $this;
+    }
+
+    /**
+     * Set the bookends
+     *
+     * @param  array $bookends
+     * @return AbstractPaginator
+     */
+    public function setBookends(array $bookends)
+    {
+        if (array_key_exists('start', $bookends)) {
+            $this->bookends['start'] = $bookends['start'];
+        }
+        if (array_key_exists('previous', $bookends)) {
+            $this->bookends['previous'] = $bookends['previous'];
+        }
+        if (array_key_exists('next', $bookends)) {
+            $this->bookends['next'] = $bookends['next'];
+        }
+        if (array_key_exists('end', $bookends)) {
+            $this->bookends['end'] = $bookends['end'];
+        }
+
         return $this;
     }
 
@@ -160,6 +195,27 @@ abstract class AbstractPaginator
     public function getNumberOfPages()
     {
         return $this->numberOfPages;
+    }
+
+    /**
+     * Get a bookend
+     *
+     * @param  string $key
+     * @return string
+     */
+    public function getBookend($key)
+    {
+        return (isset($this->bookends[$key])) ? $this->bookends[$key] : null;
+    }
+
+    /**
+     * Get the bookends
+     *
+     * @return array
+     */
+    public function getBookends()
+    {
+        return $this->bookends;
     }
 
     /**

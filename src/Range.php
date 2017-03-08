@@ -27,21 +27,16 @@ class Range extends AbstractPaginator
 {
 
     /**
-     * Page bookends
-     * @var array
-     */
-    protected $bookends = [
-        'start'    => '&laquo;',
-        'previous' => '&lsaquo;',
-        'next'     => '&rsaquo;',
-        'end'      => '&raquo;'
-    ];
-
-    /**
      * Link separator
      * @var string
      */
     protected $separator = null;
+
+    /**
+     * Page links property
+     * @var array
+     */
+    protected $links = [];
 
     /**
      * Class 'on' name for page link tags
@@ -54,12 +49,6 @@ class Range extends AbstractPaginator
      * @var string
      */
     protected $classOff = null;
-
-    /**
-     * Page links property
-     * @var array
-     */
-    protected $links = [];
 
     /**
      * Set the bookend separator
@@ -77,7 +66,7 @@ class Range extends AbstractPaginator
      * Set the class 'on' name
      *
      * @param  string $class
-     * @return Range
+     * @return AbstractPaginator
      */
     public function setClassOn($class)
     {
@@ -89,35 +78,11 @@ class Range extends AbstractPaginator
      * Set the class 'off' name.
      *
      * @param  string $class
-     * @return Range
+     * @return AbstractPaginator
      */
     public function setClassOff($class)
     {
         $this->classOff = $class;
-        return $this;
-    }
-
-    /**
-     * Set the bookends
-     *
-     * @param  array $bookends
-     * @return Range
-     */
-    public function setBookends(array $bookends)
-    {
-        if (array_key_exists('start', $bookends)) {
-            $this->bookends['start'] = $bookends['start'];
-        }
-        if (array_key_exists('previous', $bookends)) {
-            $this->bookends['previous'] = $bookends['previous'];
-        }
-        if (array_key_exists('next', $bookends)) {
-            $this->bookends['next'] = $bookends['next'];
-        }
-        if (array_key_exists('end', $bookends)) {
-            $this->bookends['end'] = $bookends['end'];
-        }
-
         return $this;
     }
 
@@ -129,6 +94,20 @@ class Range extends AbstractPaginator
     public function getSeparator()
     {
         return $this->separator;
+    }
+
+    /**
+     * Get the page links
+     *
+     * @param  int $page
+     * @return array
+     */
+    public function getLinkRange($page = 1)
+    {
+        $this->calculateRange($page);
+        $this->createRange($page);
+
+        return $this->links;
     }
 
     /**
@@ -149,41 +128,6 @@ class Range extends AbstractPaginator
     public function getClassOff()
     {
         return $this->classOff;
-    }
-
-    /**
-     * Get a bookend
-     *
-     * @param  string $key
-     * @return string
-     */
-    public function getBookend($key)
-    {
-        return (isset($this->bookends[$key])) ? $this->bookends[$key] : null;
-    }
-
-    /**
-     * Get the bookends
-     *
-     * @return array
-     */
-    public function getBookends()
-    {
-        return $this->bookends;
-    }
-
-    /**
-     * Get the page links
-     *
-     * @param  int $page
-     * @return array
-     */
-    public function getLinkRange($page = 1)
-    {
-        $this->calculateRange($page);
-        $this->createRange($page);
-
-        return $this->links;
     }
 
     /**

@@ -95,6 +95,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
         $links = $paginator->getFormString(2);
         $links = $paginator->getFormString(12);
         $pages = (string)$paginator;
+        $this->assertEquals(' o ', $paginator->getInputSeparator());
         $this->assertEquals(13, $paginator->getNumberOfPages());
         $this->assertContains('<form', $pages);
     }

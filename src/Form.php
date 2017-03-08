@@ -64,6 +64,16 @@ class Form extends AbstractPaginator
     }
 
     /**
+     * Get input separator
+     *
+     * @return string
+     */
+    public function getInputSeparator()
+    {
+        return $this->inputSeparator;
+    }
+
+    /**
      * Get the page form string
      *
      * @param  int $page
@@ -88,7 +98,7 @@ class Form extends AbstractPaginator
         $this->currentPage = $page;
 
         // Generate the page links.
-        $this->form = '';
+        $form = '';
 
         // Preserve any passed GET parameters.
         $query  = null;
@@ -111,17 +121,44 @@ class Form extends AbstractPaginator
         }
 
         // Calculate page range
-        $this->calculateRange($page);
+        $pageRange = $this->calculateRange($page);
 
-        $this->form = '<form class="pop-paginator-form" action="' . $uri . ((null !== $query) ? '?' . substr($query, 1)  : null) .
+        $form = '<form class="pop-paginator-form" action="' . $uri . ((null !== $query) ? '?' . substr($query, 1)  : null) .
             '" method="get"><div><input type="text" name="' . $this->queryKey . '" size="2" value="' .
             $this->currentPage . '" /> ' . $this->inputSeparator . ' ' . $this->numberOfPages . '</div>';
 
         if (null !== $hidden) {
-            $this->form .= '<div>' . $hidden . '</div>';
+            $form .= '<div>' . $hidden . '</div>';
         }
 
-        $this->form .= '</form>';
+        $startLinks  = null;
+        $endLinks    = null;
+
+        for ($i = $pageRange['start']; $i <= $pageRange['end']; $i++) {
+            if (($i == $pageRange['start']) && ($pageRange['prev'])) {
+                if (null !== $this->bookends['start']) {
+                    $startLinks .= "<a href=\"" . $uri . "?" . $this->queryKey . "=1" . "{$query}\">" .
+                        $this->bookends['start'] . "</a>";
+                }
+                if (null !== $this->bookends['previous']) {
+                    $startLinks .= "<a href=\"" . $uri . "?" . $this->queryKey . "=" . ($i - 1) . "{$query}\">" .
+                        $this->bookends['previous'] . "</a>";
+                }
+            }
+
+            if (($i == $pageRange['end']) && ($pageRange['next'])) {
+                if (null !== $this->bookends['next']) {
+                    $endLinks .= "<a href=\"" . $uri . "?" . $this->queryKey . "=" . ($i + 1) . "{$query}\">" .
+                        $this->bookends['next'] . "</a>";
+                }
+                if (null !== $this->bookends['end']) {
+                    $endLinks .= "<a href=\"" . $uri . "?" . $this->queryKey . "=" . $this->numberOfPages .
+                        "{$query}\">" . $this->bookends['end'] . "</a>";
+                }
+            }
+        }
+
+        $this->form = $startLinks . $form . $endLinks . '</form>';
     }
 
     /**
