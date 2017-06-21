@@ -123,7 +123,7 @@ class Form extends AbstractPaginator
         // Calculate page range
         $pageRange = $this->calculateRange($page);
 
-        $form = '<form class="pop-paginator-form" action="' . $uri . ((null !== $query) ? '?' . substr($query, 1)  : null) .
+        $form .= '<form class="pop-paginator-form" action="' . $uri . ((null !== $query) ? '?' . substr($query, 1)  : null) .
             '" method="get"><div><input type="text" name="' . $this->queryKey . '" size="2" value="' .
             $this->currentPage . '" /> ' . $this->inputSeparator . ' ' . $this->numberOfPages . '</div>';
 
