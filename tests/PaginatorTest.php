@@ -3,8 +3,9 @@
 namespace Pop\Paginator\Test;
 
 use Pop\Paginator\Paginator;
+use PHPUnit\Framework\TestCase;
 
-class PaginatorTest extends \PHPUnit_Framework_TestCase
+class PaginatorTest extends TestCase
 {
 
     public function testConstructor()
