@@ -224,7 +224,7 @@ abstract class AbstractPaginator
      * @param  int $page
      * @return array
      */
-    protected function calculateRange($page = 1)
+    public function calculateRange($page = 1)
     {
         $this->currentPage = $page;
 

@@ -79,8 +79,11 @@ class Form extends AbstractPaginator
      * @param  int $page
      * @return string
      */
-    public function getFormString($page = 1)
+    public function getFormString($page = null)
     {
+        if (null === $page) {
+            $page = (isset($_GET[$this->queryKey]) && ((int)$_GET[$this->queryKey] > 0)) ? (int)$_GET[$this->queryKey] : 1;
+        }
         $this->calculateRange($page);
         $this->createForm($page);
 
@@ -170,8 +173,10 @@ class Form extends AbstractPaginator
      */
     public function __toString()
     {
-        $page = (isset($_GET[$this->queryKey]) && ((int)$_GET[$this->queryKey] > 0)) ? (int)$_GET[$this->queryKey] : 1;
-        return $this->getFormString($page);
+        if (empty($this->form)) {
+            $this->getFormString();
+        }
+        return $this->form;
     }
 
 }

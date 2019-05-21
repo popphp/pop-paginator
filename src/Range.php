@@ -66,7 +66,7 @@ class Range extends AbstractPaginator
      * Set the class 'on' name
      *
      * @param  string $class
-     * @return AbstractPaginator
+     * @return Range
      */
     public function setClassOn($class)
     {
@@ -78,7 +78,7 @@ class Range extends AbstractPaginator
      * Set the class 'off' name.
      *
      * @param  string $class
-     * @return AbstractPaginator
+     * @return Range
      */
     public function setClassOff($class)
     {
@@ -102,8 +102,11 @@ class Range extends AbstractPaginator
      * @param  int $page
      * @return array
      */
-    public function getLinkRange($page = 1)
+    public function getLinkRange($page = null)
     {
+        if (null === $page) {
+            $page = (isset($_GET[$this->queryKey]) && ((int)$_GET[$this->queryKey] > 0)) ? (int)$_GET[$this->queryKey] : 1;
+        }
         $this->calculateRange($page);
         $this->createRange($page);
 
@@ -136,7 +139,7 @@ class Range extends AbstractPaginator
      * @param  int  $page
      * @return void
      */
-    protected function createRange($page = 1)
+    public function createRange($page = 1)
     {
         $this->currentPage = $page;
 
@@ -205,14 +208,39 @@ class Range extends AbstractPaginator
     }
 
     /**
+     * Wrap page links in an HTML node
+     *
+     * @param  string $node
+     * @param  string $classOn
+     * @param  string $classOff
+     * @return array
+     */
+    public function wrapLinks($node, $classOn = null, $classOff = null)
+    {
+        if (empty($this->links)) {
+            $this->getLinkRange();
+        }
+        $classOff = (null !== $classOff) ? " class=\"{$classOff}\"" : null;
+        $classOn  = (null !== $classOn) ? " class=\"{$classOn}\"" : null;
+
+        foreach ($this->links as $i => $link) {
+            $this->links[$i] = '<' . $node . ((strpos($link, 'span') !== false) ? $classOff : $classOn) . '>' . $link . '</' . $node . '>';
+        }
+
+        return $this->links;
+    }
+
+    /**
      * Output the rendered page links
      *
      * @return string
      */
     public function __toString()
     {
-        $page = (isset($_GET[$this->queryKey]) && ((int)$_GET[$this->queryKey] > 0)) ? (int)$_GET[$this->queryKey] : 1;
-        return implode($this->separator, $this->getLinkRange($page));
+        if (empty($this->links)) {
+            $this->getLinkRange();
+        }
+        return implode($this->separator, $this->links) . PHP_EOL;
     }
 
 }
