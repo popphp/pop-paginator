@@ -156,11 +156,11 @@ class Range extends AbstractPaginator
                 $_SERVER['REQUEST_URI'];
 
             if (count($_GET) > 0) {
-                foreach ($_GET as $key => $value) {
-                    if ($key != $this->queryKey) {
-                        $query  .= '&' . $key . '=' . $value;
-                    }
+                $get = $_GET;
+                if (isset($get[$this->queryKey])) {
+                    unset($get[$this->queryKey]);
                 }
+                $query = '&' . http_build_query($get);
             }
         }
 
