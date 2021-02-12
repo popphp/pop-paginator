@@ -1,7 +1,7 @@
 pop-paginator
 =============
 
-[![Build Status](https://travis-ci.org/popphp/pop-paginator.svg?branch=master)](https://travis-ci.org/popphp/pop-paginator)
+[![Build Status](https://github.com/popphp/pop-paginator/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-paginator/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-paginator)](http://cc.popphp.org/pop-paginator/)
 
 OVERVIEW

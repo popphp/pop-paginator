@@ -98,7 +98,7 @@ class PaginatorTest extends TestCase
         $pages = (string)$paginator;
         $this->assertEquals(' o ', $paginator->getInputSeparator());
         $this->assertEquals(13, $paginator->getNumberOfPages());
-        $this->assertContains('<form', $pages);
+        $this->assertStringContainsString('<form', $pages);
     }
 
 }
