@@ -63,6 +63,14 @@ class PaginatorTest extends TestCase
         $this->assertEquals('<<', $paginator->getBookends()['start']);
     }
 
+    public function testWrapLinks()
+    {
+        $paginator = Paginator::createRange(20);
+        $links     = $paginator->wrapLinks('div', 'link-on', 'link-off');
+        $this->assertEquals('<div class="link-off"><span>1</span></div>', $links[0]);
+        $this->assertEquals('<div class="link-on"><a href="?page=2">2</a></div>', $links[1]);
+    }
+
     public function testGetRange()
     {
         $_SERVER['REQUEST_URI'] = '/pages.php';

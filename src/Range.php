@@ -240,7 +240,7 @@ class Range extends AbstractPaginator
         if (empty($this->links)) {
             $this->getLinkRange();
         }
-        return implode($this->separator, $this->links) . PHP_EOL;
+        return implode((string)$this->separator, $this->links) . PHP_EOL;
     }
 
 }
