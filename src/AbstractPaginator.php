@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,66 +19,66 @@ namespace Pop\Paginator;
  * @category   Pop
  * @package    Pop\Paginator
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.1.0
+ * @version    4.0.0
  */
-abstract class AbstractPaginator
+abstract class AbstractPaginator implements PaginatorInterface
 {
 
     /**
      * Total number of items
      * @var int
      */
-    protected $total = 0;
+    protected int $total = 0;
 
     /**
      * Number of items per page
      * @var int
      */
-    protected $perPage = 10;
+    protected int $perPage = 10;
 
     /**
      * Range of pages per page
      * @var int
      */
-    protected $range = 10;
+    protected int $range = 10;
 
     /**
      * Query key
      * @var string
      */
-    protected $queryKey = 'page';
+    protected string $queryKey = 'page';
 
     /**
      * Current page property
      * @var int
      */
-    protected $currentPage = 1;
+    protected int $currentPage = 1;
 
     /**
      * Number of pages property
-     * @var int
+     * @var ?int
      */
-    protected $numberOfPages = null;
+    protected ?int $numberOfPages = null;
 
     /**
      * Current page start index property
-     * @var int
+     * @var ?int
      */
-    protected $start = null;
+    protected ?int $start = null;
 
     /**
      * Current page end index property
-     * @var int
+     * @var ?int
      */
-    protected $end = null;
+    protected ?int $end = null;
 
     /**
      * Page bookends
      * @var array
      */
-    protected $bookends = [
+    protected array $bookends = [
         'start'    => '&laquo;',
         'previous' => '&lsaquo;',
         'next'     => '&rsaquo;',
@@ -94,11 +94,11 @@ abstract class AbstractPaginator
      * @param  int $perPage
      * @param  int $range
      */
-    public function __construct($total, $perPage = 10, $range = 10)
+    public function __construct(int $total, int $perPage = 10, int $range = 10)
     {
-        $this->total   = (int)$total;
-        $this->perPage = (int)$perPage;
-        $this->range   = (int)$range;
+        $this->total   = $total;
+        $this->perPage = $perPage;
+        $this->range   = $range;
     }
 
     /**
@@ -107,7 +107,7 @@ abstract class AbstractPaginator
      * @param  string $key
      * @return AbstractPaginator
      */
-    public function setQueryKey($key)
+    public function setQueryKey(string $key): AbstractPaginator
     {
         $this->queryKey = $key;
         return $this;
@@ -119,7 +119,7 @@ abstract class AbstractPaginator
      * @param  array $bookends
      * @return AbstractPaginator
      */
-    public function setBookends(array $bookends)
+    public function setBookends(array $bookends): AbstractPaginator
     {
         if (array_key_exists('start', $bookends)) {
             $this->bookends['start'] = $bookends['start'];
@@ -142,7 +142,7 @@ abstract class AbstractPaginator
      *
      * @return int
      */
-    public function getTotal()
+    public function getTotal(): int
     {
         return $this->total;
     }
@@ -152,7 +152,7 @@ abstract class AbstractPaginator
      *
      * @return int
      */
-    public function getPerPage()
+    public function getPerPage(): int
     {
         return $this->perPage;
     }
@@ -162,7 +162,7 @@ abstract class AbstractPaginator
      *
      * @return int
      */
-    public function getRange()
+    public function getRange(): int
     {
         return $this->range;
     }
@@ -170,9 +170,9 @@ abstract class AbstractPaginator
     /**
      * Get the query key
      *
-     * @return int
+     * @return string
      */
-    public function getQueryKey()
+    public function getQueryKey(): string
     {
         return $this->queryKey;
     }
@@ -182,7 +182,7 @@ abstract class AbstractPaginator
      *
      * @return int
      */
-    public function getCurrentPage()
+    public function getCurrentPage(): int
     {
         return $this->currentPage;
     }
@@ -192,7 +192,7 @@ abstract class AbstractPaginator
      *
      * @return int
      */
-    public function getNumberOfPages()
+    public function getNumberOfPages(): int
     {
         return $this->numberOfPages;
     }
@@ -201,11 +201,11 @@ abstract class AbstractPaginator
      * Get a bookend
      *
      * @param  string $key
-     * @return string
+     * @return string|null
      */
-    public function getBookend($key)
+    public function getBookend(string $key): string|null
     {
-        return (isset($this->bookends[$key])) ? $this->bookends[$key] : null;
+        return $this->bookends[$key] ?? null;
     }
 
     /**
@@ -213,7 +213,7 @@ abstract class AbstractPaginator
      *
      * @return array
      */
-    public function getBookends()
+    public function getBookends(): array
     {
         return $this->bookends;
     }
@@ -224,7 +224,7 @@ abstract class AbstractPaginator
      * @param  int $page
      * @return array
      */
-    public function calculateRange($page = 1)
+    public function calculateRange(int $page = 1): array
     {
         $this->currentPage = $page;
 
@@ -252,7 +252,7 @@ abstract class AbstractPaginator
         }
 
         // Check and calculate for any page ranges.
-        if (((null === $this->range) || ($this->range > $this->numberOfPages)) && (null === $this->total)) {
+        if ((($this->range === null) || ($this->range > $this->numberOfPages)) && ($this->total === null)) {
             $range = [
                 'start' => 1,
                 'end'   => $this->numberOfPages,

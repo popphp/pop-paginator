@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Paginator;
  * @category   Pop
  * @package    Pop\Paginator
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.1.0
+ * @version    4.0.0
  */
 class Form extends AbstractPaginator
 {
@@ -30,13 +30,13 @@ class Form extends AbstractPaginator
      * Input separator
      * @var string
      */
-    protected $inputSeparator = 'of';
+    protected string $inputSeparator = 'of';
 
     /**
      * Page form property
-     * @var string
+     * @var ?string
      */
-    protected $form = null;
+    protected ?string $form = null;
 
     /**
      * Constructor
@@ -46,7 +46,7 @@ class Form extends AbstractPaginator
      * @param  int $total
      * @param  int $perPage
      */
-    public function __construct($total, $perPage = 10)
+    public function __construct(int $total, int $perPage = 10)
     {
         parent::__construct($total, $perPage, 1);
     }
@@ -57,7 +57,7 @@ class Form extends AbstractPaginator
      * @param  string $separator
      * @return Form
      */
-    public function setInputSeparator($separator)
+    public function setInputSeparator(string $separator): Form
     {
         $this->inputSeparator = $separator;
         return $this;
@@ -68,7 +68,7 @@ class Form extends AbstractPaginator
      *
      * @return string
      */
-    public function getInputSeparator()
+    public function getInputSeparator(): string
     {
         return $this->inputSeparator;
     }
@@ -76,12 +76,12 @@ class Form extends AbstractPaginator
     /**
      * Get the page form string
      *
-     * @param  int $page
+     * @param  ?int $page
      * @return string
      */
-    public function getFormString($page = null)
+    public function getFormString(?int $page = null): string
     {
-        if (null === $page) {
+        if ($page === null) {
             $page = (isset($_GET[$this->queryKey]) && ((int)$_GET[$this->queryKey] > 0)) ? (int)$_GET[$this->queryKey] : 1;
         }
         $this->calculateRange($page);
@@ -96,7 +96,7 @@ class Form extends AbstractPaginator
      * @param  int  $page
      * @return void
      */
-    protected function createForm($page = 1)
+    protected function createForm(int $page = 1): void
     {
         $this->currentPage = $page;
 
@@ -134,11 +134,11 @@ class Form extends AbstractPaginator
         // Calculate page range
         $pageRange = $this->calculateRange($page);
 
-        $form .= '<form class="pop-paginator-form" action="' . $uri . ((null !== $query) ? '?' . substr($query, 1)  : null) .
+        $form .= '<form class="pop-paginator-form" action="' . $uri . (($query !== null) ? '?' . substr($query, 1)  : null) .
             '" method="get"><div><input type="text" name="' . $this->queryKey . '" size="2" value="' .
             $this->currentPage . '" /> ' . $this->inputSeparator . ' ' . $this->numberOfPages . '</div>';
 
-        if (null !== $hidden) {
+        if ($hidden !== null) {
             $form .= '<div>' . $hidden . '</div>';
         }
 
@@ -149,22 +149,22 @@ class Form extends AbstractPaginator
 
         for ($i = $pageRange['start']; $i <= $pageRange['end']; $i++) {
             if (($i == $pageRange['start']) && ($pageRange['prev'])) {
-                if (null !== $this->bookends['start']) {
+                if ($this->bookends['start'] !== null) {
                     $startLinks .= "<a href=\"" . $uri . "?" . $this->queryKey . "=1" . "{$query}\">" .
                         $this->bookends['start'] . "</a>";
                 }
-                if (null !== $this->bookends['previous']) {
+                if ($this->bookends['previous'] !== null) {
                     $startLinks .= "<a href=\"" . $uri . "?" . $this->queryKey . "=" . ($i - 1) . "{$query}\">" .
                         $this->bookends['previous'] . "</a>";
                 }
             }
 
             if (($i == $pageRange['end']) && ($pageRange['next'])) {
-                if (null !== $this->bookends['next']) {
+                if ($this->bookends['next'] !== null) {
                     $endLinks .= "<a href=\"" . $uri . "?" . $this->queryKey . "=" . ($i + 1) . "{$query}\">" .
                         $this->bookends['next'] . "</a>";
                 }
-                if (null !== $this->bookends['end']) {
+                if ($this->bookends['end'] !== null) {
                     $endLinks .= "<a href=\"" . $uri . "?" . $this->queryKey . "=" . $this->numberOfPages .
                         "{$query}\">" . $this->bookends['end'] . "</a>";
                 }
@@ -179,7 +179,7 @@ class Form extends AbstractPaginator
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (empty($this->form)) {
             $this->getFormString();

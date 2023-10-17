@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,36 +19,36 @@ namespace Pop\Paginator;
  * @category   Pop
  * @package    Pop\Paginator
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.1.0
+ * @version    4.0.0
  */
 class Range extends AbstractPaginator
 {
 
     /**
      * Link separator
-     * @var string
+     * @var ?string
      */
-    protected $separator = null;
+    protected ?string $separator = null;
 
     /**
      * Page links property
      * @var array
      */
-    protected $links = [];
+    protected array $links = [];
 
     /**
      * Class 'on' name for page link tags
-     * @var string
+     * @var ?string
      */
-    protected $classOn = null;
+    protected ?string $classOn = null;
 
     /**
      * Class 'off' name for page link tags
-     * @var string
+     * @var ?string
      */
-    protected $classOff = null;
+    protected ?string $classOff = null;
 
     /**
      * Set the bookend separator
@@ -56,7 +56,7 @@ class Range extends AbstractPaginator
      * @param  string $sep
      * @return Range
      */
-    public function setSeparator($sep)
+    public function setSeparator(string $sep): Range
     {
         $this->separator = $sep;
         return $this;
@@ -68,7 +68,7 @@ class Range extends AbstractPaginator
      * @param  string $class
      * @return Range
      */
-    public function setClassOn($class)
+    public function setClassOn(string $class): Range
     {
         $this->classOn = $class;
         return $this;
@@ -80,7 +80,7 @@ class Range extends AbstractPaginator
      * @param  string $class
      * @return Range
      */
-    public function setClassOff($class)
+    public function setClassOff(string $class): Range
     {
         $this->classOff = $class;
         return $this;
@@ -91,7 +91,7 @@ class Range extends AbstractPaginator
      *
      * @return string
      */
-    public function getSeparator()
+    public function getSeparator(): string
     {
         return $this->separator;
     }
@@ -99,12 +99,12 @@ class Range extends AbstractPaginator
     /**
      * Get the page links
      *
-     * @param  int $page
+     * @param  ?int $page
      * @return array
      */
-    public function getLinkRange($page = null)
+    public function getLinkRange(?int $page = null): array
     {
-        if (null === $page) {
+        if ($page === null) {
             $page = (isset($_GET[$this->queryKey]) && ((int)$_GET[$this->queryKey] > 0)) ? (int)$_GET[$this->queryKey] : 1;
         }
         $this->calculateRange($page);
@@ -118,7 +118,7 @@ class Range extends AbstractPaginator
      *
      * @return string
      */
-    public function getClassOn()
+    public function getClassOn(): string
     {
         return $this->classOn;
     }
@@ -128,7 +128,7 @@ class Range extends AbstractPaginator
      *
      * @return string
      */
-    public function getClassOff()
+    public function getClassOff(): string
     {
         return $this->classOff;
     }
@@ -139,7 +139,7 @@ class Range extends AbstractPaginator
      * @param  int  $page
      * @return void
      */
-    public function createRange($page = 1)
+    public function createRange(int $page = 1): void
     {
         $this->currentPage = $page;
 
@@ -171,19 +171,19 @@ class Range extends AbstractPaginator
             $newLink  = null;
             $prevLink = null;
             $nextLink = null;
-            $classOff = (null !== $this->classOff) ? " class=\"{$this->classOff}\"" : null;
-            $classOn  = (null !== $this->classOn) ? " class=\"{$this->classOn}\"" : null;
+            $classOff = ($this->classOff !== null) ? " class=\"{$this->classOff}\"" : null;
+            $classOn  = ($this->classOn !== null) ? " class=\"{$this->classOn}\"" : null;
 
             $newLink = ($i == $page) ? "<span{$classOff}>{$i}</span>" : "<a{$classOn} href=\"" . $uri . "?" .
                 $this->queryKey . "={$i}{$query}\">{$i}</a>";
 
             if (($i == $pageRange['start']) && ($pageRange['prev'])) {
-                if (null !== $this->bookends['start']) {
+                if ($this->bookends['start'] !== null) {
                     $startLink = "<a{$classOn} href=\"" . $uri . "?" . $this->queryKey . "=1" . "{$query}\">" .
                         $this->bookends['start'] . "</a>";
                     $this->links[] = $startLink;
                 }
-                if (null !== $this->bookends['previous']) {
+                if ($this->bookends['previous'] !== null) {
                     $prevLink  = "<a{$classOn} href=\"" . $uri . "?" . $this->queryKey . "=" . ($i - 1) . "{$query}\">" .
                         $this->bookends['previous'] . "</a>";
                     $this->links[] = $prevLink;
@@ -193,12 +193,12 @@ class Range extends AbstractPaginator
             $this->links[] = $newLink;
 
             if (($i == $pageRange['end']) && ($pageRange['next'])) {
-                if (null !== $this->bookends['next']) {
+                if ($this->bookends['next'] !== null) {
                     $nextLink = "<a{$classOn} href=\"" . $uri . "?" . $this->queryKey . "=" . ($i + 1) . "{$query}\">" .
                         $this->bookends['next'] . "</a>";
                     $this->links[] = $nextLink;
                 }
-                if (null !== $this->bookends['end']) {
+                if ($this->bookends['end'] !== null) {
                     $endLink  = "<a{$classOn} href=\"" . $uri . "?" . $this->queryKey . "=" . $this->numberOfPages .
                         "{$query}\">" . $this->bookends['end'] . "</a>";
                     $this->links[] = $endLink;
@@ -210,21 +210,21 @@ class Range extends AbstractPaginator
     /**
      * Wrap page links in an HTML node
      *
-     * @param  string $node
-     * @param  string $classOn
-     * @param  string $classOff
+     * @param  string  $node
+     * @param  ?string $classOn
+     * @param  ?string $classOff
      * @return array
      */
-    public function wrapLinks($node, $classOn = null, $classOff = null)
+    public function wrapLinks(string $node, ?string $classOn = null, ?string $classOff = null): array
     {
         if (empty($this->links)) {
             $this->getLinkRange();
         }
-        $classOff = (null !== $classOff) ? " class=\"{$classOff}\"" : null;
-        $classOn  = (null !== $classOn) ? " class=\"{$classOn}\"" : null;
+        $classOff = ($classOff !== null) ? " class=\"{$classOff}\"" : null;
+        $classOn  = ($classOn !== null) ? " class=\"{$classOn}\"" : null;
 
         foreach ($this->links as $i => $link) {
-            $this->links[$i] = '<' . $node . ((strpos($link, 'span') !== false) ? $classOff : $classOn) . '>' . $link . '</' . $node . '>';
+            $this->links[$i] = '<' . $node . ((str_contains($link, 'span')) ? $classOff : $classOn) . '>' . $link . '</' . $node . '>';
         }
 
         return $this->links;
@@ -235,7 +235,7 @@ class Range extends AbstractPaginator
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (empty($this->links)) {
             $this->getLinkRange();

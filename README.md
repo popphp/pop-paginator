@@ -18,6 +18,13 @@ Install `pop-paginator` using Composer.
 
     composer require popphp/pop-paginator
 
+Or, require it in your composer.json file
+
+    "require": {
+        "popphp/pop-paginator" : "^4.0.0"
+    }
+
+
 BASIC USAGE
 -----------
 
