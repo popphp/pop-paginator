@@ -4,14 +4,24 @@ pop-paginator
 [![Build Status](https://github.com/popphp/pop-paginator/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-paginator/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-paginator)](http://cc.popphp.org/pop-paginator/)
 
-OVERVIEW
+[![Join the chat at https://popphp.slack.com](https://media.popphp.org/img/slack.svg)](https://popphp.slack.com)
+[![Join the chat at https://discord.gg/D9JBxPa5](https://media.popphp.org/img/discord.svg)](https://discord.gg/D9JBxPa5)
+
+* [Overview](#overview)
+* [Install](#install)
+* [Quickstart](#quickstart)
+* [Page Range](#page-range)
+* [Page Form](#page-form)
+* [Options](#options)
+
+Overview
 --------
 `pop-paginator` is a component for handling pagination for large data sets.
 You can set multiple options to control the display of the pages and the links.
 
 `pop-paginator` is a component of the [Pop PHP Framework](http://www.popphp.org/).
 
-INSTALL
+Install
 -------
 
 Install `pop-paginator` using Composer.
@@ -24,16 +34,15 @@ Or, require it in your composer.json file
         "popphp/pop-paginator" : "^4.0.0"
     }
 
+[Top](#pop-paginator)
 
-BASIC USAGE
------------
-
-### Basic example of a list
+Quickstart
+----------
 
 ```php
-use Pop\Paginator\Range;
+use Pop\Paginator\Paginator;
 
-$paginator = new Range(42);
+$paginator = Paginator::createRange(42); // Returns a Pop\Paginator\Range object
 echo $paginator;
 ```
 
@@ -57,12 +66,20 @@ And if you clicked on page 3, it would render:
 <a href="/?page=5">5</a>
 ```
 
-### Basic example with a large set, using the bookends
+[Top](#pop-paginator)
+
+Page Range
+----------
+
+In the above example, a page range object renders a range of page links. With it, you can
+set a large number of pages and have it render "bookend" link before and after the range
+as the "previous" and "next" links. Pass the total number of items, the per page limit and the
+range limit:
 
 ```php
-use Pop\Paginator\Range;
+use Pop\Paginator\Paginator;
 
-$paginator = new Range(4512);
+$paginator = Paginator::createRange(4512, 10, 10); // Returns a Pop\Paginator\Range object
 echo $paginator;
 ```
 
@@ -88,14 +105,17 @@ If we go to page 12, it would render:
 As you can see, it renders the "bookends" to navigate to the next set of pages,
 the previous set, the beginning of the set or the end.
 
-### Using an input field
+[Top](#pop-paginator)
 
-To have a cleaner way of displaying a large set of pages, you can use an input field
-within a form like this:
+Page Form
+---------
+
+To have a cleaner way of displaying a large set of pages, you can use the form object,
+which renders a input form field.
 
 ```php
 use Pop\Paginator\Form;
-$paginator = new Form(558);
+$paginator = new Form(558); // Returns a Pop\Paginator\Form object
 echo $paginator;
 ```
 
@@ -114,9 +134,12 @@ This will produce:
 So instead of a set a links in between the bookends, there is a form input field
 that will allow the user to input a specific page to jump to.
 
-### Other options
+[Top](#pop-paginator)
 
-You can set many options to tailor the paginator's look and functionality:
+Options
+-------
+
+You can set many options to tailor the paginator object's look and functionality:
 
 * Number of items per page
 * Range of the page sets
@@ -127,3 +150,21 @@ You can set many options to tailor the paginator's look and functionality:
     + previous
     + next
     + end
+
+```php
+use Pop\Paginator\Form;
+$paginator = new Form(558); // Returns a Pop\Paginator\Form object
+$paginator->setBookends([
+    'start'    => '&laquo;',
+    'previous' => '&lsaquo;',
+    'next'     => '&rsaquo;',
+    'end'      => '&raquo;'
+])
+```
+
+The `start` is the far left bookend that takes you back to the beginning.
+The `previous` is the left bookend that takes you to the previous page set.
+The `next` is the right bookend that takes you to the next page set.
+The `end` is the far right bookend that takes you all the way to the end.
+
+[Top](#pop-paginator)
