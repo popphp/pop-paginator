@@ -103,7 +103,7 @@ If we go to page 12, it would render:
 ```
 
 As you can see, it renders the "bookends" to navigate to the next set of pages,
-the previous set, the beginning of the set or the end.
+the previous set, the beginning or end of the set.
 
 [Top](#pop-paginator)
 
