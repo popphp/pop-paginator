@@ -4,7 +4,6 @@ pop-paginator
 [![Build Status](https://github.com/popphp/pop-paginator/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-paginator/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-paginator)](http://cc.popphp.org/pop-paginator/)
 
-[![Join the chat at https://popphp.slack.com](https://media.popphp.org/img/slack.svg)](https://popphp.slack.com)
 [![Join the chat at https://discord.gg/TZjgT74U7E](https://media.popphp.org/img/discord.svg)](https://discord.gg/TZjgT74U7E)
 
 * [Overview](#overview)
@@ -19,7 +18,7 @@ Overview
 `pop-paginator` is a component for handling pagination for large data sets.
 You can set multiple options to control the display of the pages and the links.
 
-`pop-paginator` is a component of the [Pop PHP Framework](http://www.popphp.org/).
+`pop-paginator` is a component of the [Pop PHP Framework](https://www.popphp.org/).
 
 Install
 -------
