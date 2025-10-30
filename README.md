@@ -30,7 +30,7 @@ Install `pop-paginator` using Composer.
 Or, require it in your composer.json file
 
     "require": {
-        "popphp/pop-paginator" : "^4.0.2"
+        "popphp/pop-paginator" : "^4.0.3"
     }
 
 [Top](#pop-paginator)
