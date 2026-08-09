@@ -109,4 +109,180 @@ class PaginatorTest extends TestCase
         $this->assertStringContainsString('<form', $pages);
     }
 
+    public function testFormEscapesHiddenInputValues()
+    {
+        $_SERVER['REQUEST_URI']  = '/pages.php';
+        $_SERVER['QUERY_STRING'] = 'q=malicious';
+        $_GET = [
+            'q' => '"><script>alert(1)</script>'
+        ];
+        $paginator = Paginator::createForm(100);
+        $form      = $paginator->getFormString(1);
+
+        $this->assertStringNotContainsString('<script>alert(1)</script>', $form);
+        $this->assertStringContainsString('&lt;script&gt;', $form);
+    }
+
+    public function testFormEscapesRequestUri()
+    {
+        $_SERVER['REQUEST_URI'] = '/pages.php"><script>alert(1)</script>';
+        unset($_SERVER['QUERY_STRING']);
+        $_GET = [];
+        $paginator = Paginator::createForm(100);
+        $form      = $paginator->getFormString(1);
+
+        $this->assertStringNotContainsString('<script>alert(1)</script>', $form);
+    }
+
+    public function testRangeEscapesRequestUri()
+    {
+        $_SERVER['REQUEST_URI'] = '/pages.php"><script>alert(1)</script>';
+        unset($_SERVER['QUERY_STRING']);
+        $_GET = [];
+        $paginator = Paginator::createRange(30);
+        $links     = $paginator->getLinkRange(1);
+        $html      = implode('', $links);
+
+        $this->assertStringNotContainsString('<script>alert(1)</script>', $html);
+    }
+
+    public function testGetNumberOfPagesBeforeRendering()
+    {
+        $paginator = Paginator::createRange(95, 10);
+        $this->assertEquals(10, $paginator->getNumberOfPages());
+    }
+
+    public function testGetSeparatorDefault()
+    {
+        $paginator = Paginator::createRange(100);
+        $this->assertEquals('', $paginator->getSeparator());
+    }
+
+    public function testGetClassOnClassOffDefault()
+    {
+        $paginator = Paginator::createRange(100);
+        $this->assertEquals('', $paginator->getClassOn());
+        $this->assertEquals('', $paginator->getClassOff());
+    }
+
+    public function testConstructorThrowsExceptionForZeroPerPage()
+    {
+        $this->expectException(\Pop\Paginator\Exception::class);
+        Paginator::createRange(100, 0);
+    }
+
+    public function testConstructorThrowsExceptionForNegativeRange()
+    {
+        $this->expectException(\Pop\Paginator\Exception::class);
+        Paginator::createRange(100, 10, -1);
+    }
+
+    public function testConstructorThrowsExceptionForNegativeTotal()
+    {
+        $this->expectException(\Pop\Paginator\Exception::class);
+        Paginator::createRange(-1);
+    }
+
+    public function testCalculateRangeOnLastPageWithNoRemainder()
+    {
+        $paginator = Paginator::createRange(200, 10, 10);
+        $links     = $paginator->getLinkRange(20);
+
+        $this->assertEquals(20, $paginator->getNumberOfPages());
+        $this->assertStringContainsString('<span>20</span>', implode('', $links));
+    }
+
+    public function testCalculateRangeResetsAndBuildsPrevBookendsForOutOfBoundsPage()
+    {
+        $_SERVER['REQUEST_URI'] = '/pages.php';
+        unset($_SERVER['QUERY_STRING']);
+        $_GET = [];
+        $paginator = Paginator::createRange(50, 10, 10);
+        $links     = $paginator->getLinkRange(999);
+        $html      = implode('', $links);
+
+        $this->assertEquals(5, $paginator->getNumberOfPages());
+        $this->assertEquals(999, $paginator->getCurrentPage());
+        $this->assertStringContainsString($paginator->getBookend('start'), $html);
+        $this->assertStringContainsString($paginator->getBookend('previous'), $html);
+    }
+
+    public function testRangeUnsetsQueryKeyFromPreservedGetParams()
+    {
+        $_SERVER['REQUEST_URI']  = '/pages.php';
+        $_SERVER['QUERY_STRING'] = 'page=2&foo=bar';
+        $_GET = [
+            'page' => 2,
+            'foo'  => 'bar'
+        ];
+        $paginator = Paginator::createRange(50);
+        $links     = $paginator->getLinkRange(2);
+        $html      = implode('', $links);
+
+        $this->assertStringContainsString('foo=bar', $html);
+        $this->assertSame(0, substr_count($html, 'page=2'));
+    }
+
+    public function testRangeToStringGeneratesLinksWhenNotYetGenerated()
+    {
+        $_SERVER['REQUEST_URI'] = '/pages.php';
+        unset($_SERVER['QUERY_STRING']);
+        $_GET = [];
+        $paginator = Paginator::createRange(30);
+
+        $this->assertStringContainsString('<span>1</span>', (string)$paginator);
+    }
+
+    public function testFormGetFormStringUsesGetParamWhenPageOmitted()
+    {
+        $_SERVER['REQUEST_URI'] = '/pages.php';
+        unset($_SERVER['QUERY_STRING']);
+        $_GET = [
+            'page' => 3
+        ];
+        $paginator = Paginator::createForm(100);
+        $form      = $paginator->getFormString();
+
+        $this->assertEquals(3, $paginator->getCurrentPage());
+        $this->assertStringContainsString('value="3"', $form);
+    }
+
+    public function testFormUnsetsQueryKeyFromPreservedGetParams()
+    {
+        $_SERVER['REQUEST_URI']  = '/pages.php';
+        $_SERVER['QUERY_STRING'] = 'page=2&foo=bar';
+        $_GET = [
+            'page' => 2,
+            'foo'  => 'bar'
+        ];
+        $paginator = Paginator::createForm(50);
+        $form      = $paginator->getFormString(2);
+
+        $this->assertStringContainsString('name="foo" value="bar"', $form);
+        $this->assertStringNotContainsString('type="hidden" name="page"', $form);
+    }
+
+    public function testFormHandlesArrayValuedGetParams()
+    {
+        $_SERVER['REQUEST_URI']  = '/pages.php';
+        $_SERVER['QUERY_STRING'] = 'filter[status]=active';
+        $_GET = [
+            'filter' => ['status' => 'active']
+        ];
+        $paginator = Paginator::createForm(50);
+        $form      = $paginator->getFormString(1);
+
+        $this->assertStringContainsString('name="filter[status]" value="active"', $form);
+    }
+
+    public function testFormToStringGeneratesFormWhenNotYetGenerated()
+    {
+        $_SERVER['REQUEST_URI'] = '/pages.php';
+        unset($_SERVER['QUERY_STRING']);
+        $_GET = [];
+        $paginator = Paginator::createForm(30);
+
+        $this->assertStringContainsString('<form', (string)$paginator);
+    }
+
 }

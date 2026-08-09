@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Paginator;
  * @category   Pop
  * @package    Pop\Paginator
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    4.0.3
+ * @version    4.1.0
  */
 abstract class AbstractPaginator implements PaginatorInterface
 {
@@ -93,12 +93,25 @@ abstract class AbstractPaginator implements PaginatorInterface
      * @param  int $total
      * @param  int $perPage
      * @param  int $range
+     * @throws Exception
      */
     public function __construct(int $total, int $perPage = 10, int $range = 10)
     {
+        if ($total < 0) {
+            throw new Exception('Error: The total value must be zero or greater.');
+        }
+        if ($perPage < 1) {
+            throw new Exception('Error: The per page value must be greater than zero.');
+        }
+        if ($range < 1) {
+            throw new Exception('Error: The range value must be greater than zero.');
+        }
+
         $this->total   = $total;
         $this->perPage = $perPage;
         $this->range   = $range;
+
+        $this->calculateRange($this->currentPage);
     }
 
     /**
@@ -252,57 +265,48 @@ abstract class AbstractPaginator implements PaginatorInterface
         }
 
         // Check and calculate for any page ranges.
-        if ((($this->range === null) || ($this->range > $this->numberOfPages)) && ($this->total === null)) {
+        // If page is within the first range block.
+        if (($page <= $this->range) && ($this->numberOfPages <= $this->range)) {
             $range = [
                 'start' => 1,
                 'end'   => $this->numberOfPages,
                 'prev'  => false,
                 'next'  => false
             ];
+        // If page is within the first range block, with a next range.
+        } else if (($page <= $this->range) && ($this->numberOfPages > $this->range)) {
+            $range = [
+                'start' => 1,
+                'end'   => $this->range,
+                'prev'  => false,
+                'next'  => true
+            ];
+        // Else, if page is within the last range block, with an uneven remainder.
+        } else if ($page > ($this->range * floor($this->numberOfPages / $this->range))) {
+            $range = [
+                'start' => ($this->range * floor($this->numberOfPages / $this->range)) + 1,
+                'end'   => $this->numberOfPages,
+                'prev'  => true,
+                'next'  => false
+            ];
+        // Else, if page is within the last range block, with no remainder.
+        } else if ((($this->numberOfPages % $this->range) == 0) && ($page > ($this->range * (($this->numberOfPages / $this->range) - 1)))) {
+            $range = [
+                'start' => ($this->range * (($this->numberOfPages / $this->range) - 1)) + 1,
+                'end'   => $this->numberOfPages,
+                'prev'  => true,
+                'next'  => false
+            ];
+        // Else, if page is within a middle range block.
         } else {
-            // If page is within the first range block.
-            if (($page <= $this->range) && ($this->numberOfPages <= $this->range)) {
-                $range = [
-                    'start' => 1,
-                    'end'   => $this->numberOfPages,
-                    'prev'  => false,
-                    'next'  => false
-                ];
-            // If page is within the first range block, with a next range.
-            } else if (($page <= $this->range) && ($this->numberOfPages > $this->range)) {
-                $range = [
-                    'start' => 1,
-                    'end'   => $this->range,
-                    'prev'  => false,
-                    'next'  => true
-                ];
-            // Else, if page is within the last range block, with an uneven remainder.
-            } else if ($page > ($this->range * floor($this->numberOfPages / $this->range))) {
-                $range = [
-                    'start' => ($this->range * floor($this->numberOfPages / $this->range)) + 1,
-                    'end'   => $this->numberOfPages,
-                    'prev'  => true,
-                    'next'  => false
-                ];
-            // Else, if page is within the last range block, with no remainder.
-            } else if ((($this->numberOfPages % $this->range) == 0) && ($page > ($this->range * (($this->numberOfPages / $this->range) - 1)))) {
-                $range = [
-                    'start' => ($this->range * (($this->numberOfPages / $this->range) - 1)) + 1,
-                    'end'   => $this->numberOfPages,
-                    'prev'  => true,
-                    'next'  => false
-                ];
-            // Else, if page is within a middle range block.
-            } else {
-                $posInRange = (($page % $this->range) == 0) ? ($this->range - 1) : (($page % $this->range) - 1);
-                $linkStart = $page - $posInRange;
-                $range = [
-                    'start' => $linkStart,
-                    'end'   => $linkStart + ($this->range - 1),
-                    'prev'  => true,
-                    'next'  => true
-                ];
-            }
+            $posInRange = (($page % $this->range) == 0) ? ($this->range - 1) : (($page % $this->range) - 1);
+            $linkStart = $page - $posInRange;
+            $range = [
+                'start' => $linkStart,
+                'end'   => $linkStart + ($this->range - 1),
+                'prev'  => true,
+                'next'  => true
+            ];
         }
 
         return $range;

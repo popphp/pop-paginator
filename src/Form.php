@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Paginator;
  * @category   Pop
  * @package    Pop\Paginator
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    4.0.3
+ * @version    4.1.0
  */
 class Form extends AbstractPaginator
 {
@@ -112,6 +112,7 @@ class Form extends AbstractPaginator
             $uri = (!empty($_SERVER['QUERY_STRING'])) ?
                 str_replace('?' . $_SERVER['QUERY_STRING'], '', $_SERVER['REQUEST_URI']) :
                 $_SERVER['REQUEST_URI'];
+            $uri = htmlspecialchars($uri, ENT_QUOTES);
 
             if (count($_GET) > 0) {
                 $get = $_GET;
@@ -120,11 +121,15 @@ class Form extends AbstractPaginator
                 }
                 $query = '&' . http_build_query($get);
                 foreach ($get as $key => $value) {
+                    $key = htmlspecialchars((string)$key, ENT_QUOTES);
                     if (is_array($value)) {
                         foreach ($value as $k => $v) {
+                            $k = htmlspecialchars((string)$k, ENT_QUOTES);
+                            $v = htmlspecialchars((string)$v, ENT_QUOTES);
                             $hidden .= '<input type="hidden" name="' . $key . '[' . $k . ']" value="' . $v . '" />';
                         }
                     } else {
+                        $value = htmlspecialchars((string)$value, ENT_QUOTES);
                         $hidden .= '<input type="hidden" name="' . $key . '" value="' . $value . '" />';
                     }
                 }

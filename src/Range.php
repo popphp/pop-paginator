@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Paginator;
  * @category   Pop
  * @package    Pop\Paginator
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    4.0.3
+ * @version    4.1.0
  */
 class Range extends AbstractPaginator
 {
@@ -93,7 +93,7 @@ class Range extends AbstractPaginator
      */
     public function getSeparator(): string
     {
-        return $this->separator;
+        return $this->separator ?? '';
     }
 
     /**
@@ -120,7 +120,7 @@ class Range extends AbstractPaginator
      */
     public function getClassOn(): string
     {
-        return $this->classOn;
+        return $this->classOn ?? '';
     }
 
     /**
@@ -130,7 +130,7 @@ class Range extends AbstractPaginator
      */
     public function getClassOff(): string
     {
-        return $this->classOff;
+        return $this->classOff ?? '';
     }
 
     /**
@@ -154,6 +154,7 @@ class Range extends AbstractPaginator
             $uri = (!empty($_SERVER['QUERY_STRING'])) ?
                 str_replace('?' . $_SERVER['QUERY_STRING'], '', $_SERVER['REQUEST_URI']) :
                 $_SERVER['REQUEST_URI'];
+            $uri = htmlspecialchars($uri, ENT_QUOTES);
 
             if (count($_GET) > 0) {
                 $get = $_GET;
