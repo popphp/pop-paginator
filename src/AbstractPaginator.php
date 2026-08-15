@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -243,8 +244,8 @@ abstract class AbstractPaginator implements PaginatorInterface
 
         // Calculate the number of pages based on the remainder.
         $remainder = $this->total % $this->perPage;
-        $this->numberOfPages = ($remainder != 0) ? (floor(($this->total / $this->perPage)) + 1) :
-            floor(($this->total / $this->perPage));
+        $this->numberOfPages = ($remainder != 0) ? ((int)floor($this->total / $this->perPage) + 1) :
+            (int)floor($this->total / $this->perPage);
 
         // Calculate the start index.
         $this->start = ($page * $this->perPage) - $this->perPage;
