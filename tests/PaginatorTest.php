@@ -192,8 +192,11 @@ class PaginatorTest extends TestCase
         $this->assertStringContainsString('<span>20</span>', implode('', $links));
     }
 
-    public function testCalculateRangeResetsAndBuildsPrevBookendsForOutOfBoundsPage()
+    public function testCalculateRangeResetsForOutOfBoundsPageWithinFirstBlock()
     {
+        // numberOfPages (5) fits entirely within the first range block (10), so the
+        // snapped block starts at page 1 - there is no earlier block, so no start/
+        // previous bookends (and no ?page=0 link) should be rendered.
         $_SERVER['REQUEST_URI'] = '/pages.php';
         unset($_SERVER['QUERY_STRING']);
         $_GET = [];
@@ -203,8 +206,28 @@ class PaginatorTest extends TestCase
 
         $this->assertEquals(5, $paginator->getNumberOfPages());
         $this->assertEquals(999, $paginator->getCurrentPage());
+        $this->assertStringNotContainsString($paginator->getBookend('start'), $html);
+        $this->assertStringNotContainsString($paginator->getBookend('previous'), $html);
+        $this->assertStringNotContainsString('page=0', $html);
+    }
+
+    public function testCalculateRangeBuildsPrevBookendsForOutOfBoundsPageInLaterBlock()
+    {
+        // numberOfPages (25) spans multiple range blocks (10), so an out-of-bounds
+        // page snaps to the last block (21-25), which has an earlier block before
+        // it - previous bookends should render and point at a valid page.
+        $_SERVER['REQUEST_URI'] = '/pages.php';
+        unset($_SERVER['QUERY_STRING']);
+        $_GET = [];
+        $paginator = Paginator::createRange(250, 10, 10);
+        $links     = $paginator->getLinkRange(999);
+        $html      = implode('', $links);
+
+        $this->assertEquals(25, $paginator->getNumberOfPages());
         $this->assertStringContainsString($paginator->getBookend('start'), $html);
         $this->assertStringContainsString($paginator->getBookend('previous'), $html);
+        $this->assertStringContainsString('page=20', $html);
+        $this->assertStringNotContainsString('page=0', $html);
     }
 
     public function testRangeUnsetsQueryKeyFromPreservedGetParams()
@@ -280,6 +303,8 @@ class PaginatorTest extends TestCase
         // numberOfPages (10) is an exact multiple of range (10), so the last range
         // block is "full" with no remainder. An out-of-bounds page request should
         // still snap to that last block and render it, not return an empty range.
+        // The block also starts at page 1 here, so no start/previous bookends (and
+        // no ?page=0 link) should be rendered.
         $_SERVER['REQUEST_URI'] = '/pages.php';
         unset($_SERVER['QUERY_STRING']);
         $_GET = [];
@@ -289,8 +314,8 @@ class PaginatorTest extends TestCase
 
         $this->assertEquals(10, $paginator->getNumberOfPages());
         $this->assertNotEmpty($links);
-        $this->assertStringContainsString($paginator->getBookend('start'), $html);
-        $this->assertStringContainsString($paginator->getBookend('previous'), $html);
+        $this->assertStringNotContainsString($paginator->getBookend('previous'), $html);
+        $this->assertStringNotContainsString('page=0', $html);
         $this->assertStringContainsString('page=10', $html);
     }
 
