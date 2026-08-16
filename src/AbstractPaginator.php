@@ -284,7 +284,7 @@ abstract class AbstractPaginator implements PaginatorInterface
                 $range = [
                     'start' => $lastBlockStart,
                     'end'   => $this->numberOfPages,
-                    'prev'  => true,
+                    'prev'  => ($lastBlockStart > 1),
                     'next'  => false
                 ];
             // Else, if page is within a middle range block.
