@@ -267,47 +267,37 @@ abstract class AbstractPaginator implements PaginatorInterface
 
         // Check and calculate for any page ranges.
         // If page is within the first range block.
-        if (($page <= $this->range) && ($this->numberOfPages <= $this->range)) {
+        if ($page <= $this->range) {
             $range = [
                 'start' => 1,
-                'end'   => $this->numberOfPages,
+                'end'   => min($this->range, $this->numberOfPages),
                 'prev'  => false,
-                'next'  => false
+                'next'  => ($this->numberOfPages > $this->range)
             ];
-        // If page is within the first range block, with a next range.
-        } else if (($page <= $this->range) && ($this->numberOfPages > $this->range)) {
-            $range = [
-                'start' => 1,
-                'end'   => $this->range,
-                'prev'  => false,
-                'next'  => true
-            ];
-        // Else, if page is within the last range block, with an uneven remainder.
-        } else if ($page > ($this->range * floor($this->numberOfPages / $this->range))) {
-            $range = [
-                'start' => ($this->range * floor($this->numberOfPages / $this->range)) + 1,
-                'end'   => $this->numberOfPages,
-                'prev'  => true,
-                'next'  => false
-            ];
-        // Else, if page is within the last range block, with no remainder.
-        } else if ((($this->numberOfPages % $this->range) == 0) && ($page > ($this->range * (($this->numberOfPages / $this->range) - 1)))) {
-            $range = [
-                'start' => ($this->range * (($this->numberOfPages / $this->range) - 1)) + 1,
-                'end'   => $this->numberOfPages,
-                'prev'  => true,
-                'next'  => false
-            ];
-        // Else, if page is within a middle range block.
         } else {
-            $posInRange = (($page % $this->range) == 0) ? ($this->range - 1) : (($page % $this->range) - 1);
-            $linkStart = $page - $posInRange;
-            $range = [
-                'start' => $linkStart,
-                'end'   => $linkStart + ($this->range - 1),
-                'prev'  => true,
-                'next'  => true
-            ];
+            // The first page number of the last range block, regardless of whether
+            // the number of pages divides evenly into the range.
+            $lastBlockStart = max(1, ($this->range * (int)floor(($this->numberOfPages - 1) / $this->range)) + 1);
+
+            // Else, if page is within the last range block.
+            if ($page >= $lastBlockStart) {
+                $range = [
+                    'start' => $lastBlockStart,
+                    'end'   => $this->numberOfPages,
+                    'prev'  => true,
+                    'next'  => false
+                ];
+            // Else, if page is within a middle range block.
+            } else {
+                $posInRange = (($page % $this->range) == 0) ? ($this->range - 1) : (($page % $this->range) - 1);
+                $linkStart = $page - $posInRange;
+                $range = [
+                    'start' => $linkStart,
+                    'end'   => $linkStart + ($this->range - 1),
+                    'prev'  => true,
+                    'next'  => true
+                ];
+            }
         }
 
         return $range;
