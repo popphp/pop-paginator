@@ -275,6 +275,25 @@ class PaginatorTest extends TestCase
         $this->assertStringContainsString('name="filter[status]" value="active"', $form);
     }
 
+    public function testCalculateRangeSnapsToLastBlockForOutOfBoundsPageOnExactBoundary()
+    {
+        // numberOfPages (10) is an exact multiple of range (10), so the last range
+        // block is "full" with no remainder. An out-of-bounds page request should
+        // still snap to that last block and render it, not return an empty range.
+        $_SERVER['REQUEST_URI'] = '/pages.php';
+        unset($_SERVER['QUERY_STRING']);
+        $_GET = [];
+        $paginator = Paginator::createRange(10, 1, 10);
+        $links     = $paginator->getLinkRange(11);
+        $html      = implode('', $links);
+
+        $this->assertEquals(10, $paginator->getNumberOfPages());
+        $this->assertNotEmpty($links);
+        $this->assertStringContainsString($paginator->getBookend('start'), $html);
+        $this->assertStringContainsString($paginator->getBookend('previous'), $html);
+        $this->assertStringContainsString('page=10', $html);
+    }
+
     public function testFormToStringGeneratesFormWhenNotYetGenerated()
     {
         $_SERVER['REQUEST_URI'] = '/pages.php';

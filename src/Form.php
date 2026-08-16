@@ -85,7 +85,6 @@ class Form extends AbstractPaginator
         if ($page === null) {
             $page = (isset($_GET[$this->queryKey]) && ((int)$_GET[$this->queryKey] > 0)) ? (int)$_GET[$this->queryKey] : 1;
         }
-        $this->calculateRange($page);
         $this->createForm($page);
 
         return $this->form;
