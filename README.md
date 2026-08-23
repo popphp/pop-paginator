@@ -2,7 +2,7 @@ pop-paginator
 =============
 
 [![Build Status](https://github.com/popphp/pop-paginator/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-paginator/actions)
-[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-paginator)](http://cc.popphp.org/pop-paginator/)
+[![Coverage Status](https://cc.popphp.org/coverage.php?comp=pop-paginator)](https://cc.popphp.org/pop-paginator/)
 
 [![Join the chat at https://discord.gg/TZjgT74U7E](https://media.popphp.org/img/discord.svg)](https://discord.gg/TZjgT74U7E)
 
